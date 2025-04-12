@@ -66,7 +66,7 @@ Class vyberClass() {
 }
 
 int main() {
-    cout << "Vitejte ve hre!\n";
+    cout << "Vitej ve hre!\n";
 
     Class vybranaClass = vyberClass();
 
