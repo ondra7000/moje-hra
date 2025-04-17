@@ -1,79 +1,131 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+
 using namespace std;
 
 struct Class {
     string name;
     int maxZivoty;
     int currentZivoty;
-    int maxEnergie;
-    int currentEnergie;
+    int utok;
     int zlato;
     int level;
     int zkusenosti;
-    int utok;
 };
-void ukazInformaceOClasse(Class classPostavy) {
-    cout << "\nClass: " << classPostavy.name << endl;
-    cout << "Statistiky:" << endl;
-    cout << "  Zivot - " << classPostavy.currentZivoty << "/" << classPostavy.maxZivoty << endl;
-    cout << "  Mana - " << classPostavy.currentEnergie << "/" << classPostavy.maxEnergie << endl;
-    cout << "  Utok - " << classPostavy.utok << endl;
+
+struct Monster {
+    string name;
+    int maxZivoty;
+    int currentZivoty;
+    int utok;
+    bool isMiniBoss;
+};
+
+void tahovyBoj(Class &hrac, Monster &nepritel) {
+    cout << "\nSouboj zacina! Tvym souperem je " << nepritel.name << ".\n";
+
+    if (nepritel.isMiniBoss) {
+        int damage = nepritel.utok;
+        cout << nepritel.name << " utoci a udeluje " << damage << " poskozeni!\n";
+        hrac.currentZivoty -= damage;
+
+        if (hrac.currentZivoty <= 0) {
+            cout << "Hrac byl porazen! Hra konci.\n";
+            exit(0);
+        }
+    }
+
+    while (hrac.currentZivoty > 0 && nepritel.currentZivoty > 0) {
+        cout << hrac.name << " se brani a vraci utok! Udeluje " << hrac.utok << " poskozeni.\n";
+        nepritel.currentZivoty -= hrac.utok;
+
+        if (nepritel.currentZivoty <= 0) {
+            cout << "Souper byl porazen!\n";
+            hrac.zkusenosti += 10;
+            cout << "Ziskal jsi 10 zkusenosti! Aktualni zkusenosti: " << hrac.zkusenosti << endl;
+
+
+            if (nepritel.isMiniBoss || (rand() % 2 == 0)) {
+                hrac.zlato += 20;
+                cout << "Ziskal jsi zlato! Aktualni zlato: " << hrac.zlato << endl;
+            }
+
+            if (nepritel.isMiniBoss) {
+                hrac.currentZivoty += 1;
+                cout << "Doplneni zivotu! Aktualni zivoty: " << hrac.currentZivoty << endl;
+            } else {
+                hrac.currentZivoty += 2;
+                cout << "Doplneni zivotu! Aktualni zivoty: " << hrac.currentZivoty << endl;
+            }
+
+
+            if (hrac.zkusenosti >= 20) {
+                hrac.level++;
+                hrac.maxZivoty += 2;
+                hrac.currentZivoty = hrac.maxZivoty;
+                hrac.utok += 1;
+                cout << "Novy level! Max zivot: " << hrac.maxZivoty << ", Utok: " << hrac.utok << endl;
+            }
+
+            if (nepritel.name == "Hlavni Boss") {
+                cout << "Gratulace! Porazil jsi hlavniho bosse a hra konci vitezstvim!\n";
+                exit(0);
+            }
+
+            return;
+        }
+
+
+        int damage = nepritel.utok;
+        cout << nepritel.name << " utoci a udeluje " << damage << " poskozeni!\n";
+        hrac.currentZivoty -= damage;
+
+        if (hrac.currentZivoty <= 0) {
+            cout << "Hrac byl porazen! Hra konci.\n";
+            exit(0);
+        }
+
+        cout << "Hrac - Zivoty: " << hrac.currentZivoty << "/" << hrac.maxZivoty << endl;
+        cout << "Souper - Zivoty: " << nepritel.currentZivoty << "/" << nepritel.maxZivoty << endl;
+    }
 }
 
 Class vyberClass() {
-    Class paladin = {"Frank", 5, 5, 2, 0, 100, 1, 0, 3};
-    Class hunter = {"Hunter", 4, 4, 3, 3, 80, 1, 0, 4};
-    Class mage = {"Phoenix", 3, 3, 6, 6, 70, 1, 0, 2};
-    Class warlock = {"Maverick", 4, 4, 5, 5, 60, 1, 0, 3};
+    Class paladin = {"Frank", 10, 10, 3, 100, 1, 0};
+    Class hunter = {"Hunter", 8, 8, 4, 80, 1, 0};
+    Class mage = {"Maverick", 6, 6, 2, 70, 1, 0};
+    Class warlock = {"Steve", 7, 7, 3, 60, 1, 0};
 
-    while (true) {
-        cout << "\nVyber si classu:\n";
-        cout << "1. Frank\n";
-        cout << "2. Hunter\n";
-        cout << "3. Phoenix\n";
-        cout << "4. Maverick\n";
-        cout << "5. Zobrazit informace o classach\n";
-        cout << "6. Ukoncit vyber\n";
+    cout << "\nVyber si classu:\n1. Frank\n2. Hunter\n3. Maverick\n4. Steve\n";
+    int choice;
+    cin >> choice;
 
-        int choice;
-        cin >> choice;
-
-        switch (choice) {
-            case 1:
-                return paladin;
-            case 2:
-                return hunter;
-            case 3:
-                return mage;
-            case 4:
-                return warlock;
-            case 5:
-
-                cout << "\nInformace o classach:\n";
-                ukazInformaceOClasse(paladin);
-                ukazInformaceOClasse(hunter);
-                ukazInformaceOClasse(mage);
-                ukazInformaceOClasse(warlock);
-                break;
-            case 6:
-                cout << "Ukoncujete vyber...\n";
-                exit(0);
-            default:
-                cout << "Neplatna volba! Zkus to znovu.\n";
-        }
+    switch (choice) {
+        case 1: return paladin;
+        case 2: return hunter;
+        case 3: return mage;
+        case 4: return warlock;
+        default:
+            cout << "Neplatna volba! Zkus to znovu.\n";
+            return vyberClass();
     }
 }
 
 int main() {
+    srand(time(0));
     cout << "Vitej ve hre!\n";
+    Class hrac = vyberClass();
 
-    Class vybranaClass = vyberClass();
+    Monster monster1 = {"Goblin", 8, 8, 2, false};
+    Monster miniBoss = {"Mini Boss", 2, 2, 1, true};
+    Monster boss = {"Hlavni Boss", 5, 5, 4, true};
 
-    cout << "\nZvolil jsi classu:\n";
-    ukazInformaceOClasse(vybranaClass);
+    tahovyBoj(hrac, monster1);
+    tahovyBoj(hrac, miniBoss);
+    tahovyBoj(hrac, boss);
 
-    cout << "Hodne stesti ve hre!" << endl;
     return 0;
 }
-
