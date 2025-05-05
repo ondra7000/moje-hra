@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include <cstdlib>
-#include <ctime>
-#include <limits>
+#include <cstdlib> // pro  práci s náhodnými èísly
+#include <ctime> // pro to aby generovaná èísla byla každé spuštìní odlišná
+#include <limits> // pro ignorování neplatného vstupu
 
 using namespace std;
 
