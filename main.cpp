@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include <cstdlib> // pro  práci s náhodnımi èísly
-#include <ctime> // pro to aby generovaná èísla byla kadé spuštìní odlišná
-#include <limits> // pro ignorování neplatného vstupu
+#include <cstdlib> // pro  prÃ¡ci s nÃ¡hodnÃ½mi ÄÃ­sly
+#include <ctime> // pro to aby generovanÃ¡ ÄÃ­sla byla kaÅ¾dÃ© spuÅ¡tÄ›nÄ› odliÅ¡nÃ¡
+#include <limits> // pro ignorovÃ¡nÃ­ neplatnÃ©ho vstupu
 
 using namespace std;
 
@@ -91,7 +91,7 @@ void tahovyBoj(Class &hrac, Monster &nepritel) {
         cout << "\nZvol svou akci:\n";
         cout << "1. Utok\n";
         cout << "2. Obrana (lze pouzit jen jednou za souboj)\n";
-        cout << "3. Pouziti leciveho lektvaru (+5 zivotu, ale moznost otravy -2 zivoty)\n";
+        cout << "3. Pouziti lektvaru (+5 zivotu, ale moznost otravy -2 zivoty)\n";
         cin >> volba;
 
         switch (volba) {
@@ -210,7 +210,29 @@ void zahadnaJeskyne(Class &hrac) {
 
     if (volba == 1) {
         int sance = rand() % 100;
-        if (sance < 70) {
+
+        if (sance < 40) {
+            // Starec s hadankou
+            cout << "\nV jeskyni jsi potkal stareho starce. Podiva se na tebe a rekne:\n";
+            cout << "\"Kdyz mi odpovis na mou hadanku, obdarim te zlatem a posilim tvou dusi.\"\n";
+            cout << "Hadanka: Co ma jeden krk, ale zadnou hlavu?\n";
+            cout << "1. Lampa\n";
+            cout << "2. Triko\n";
+            cout << "3. Strom\n";
+            cout << "4. Hrib\n";
+            int odpoved;
+            cin >> odpoved;
+
+            if (odpoved == 2) {
+                cout << "Spravne! Starec se usmeje a rekne: \"Moudrost je tvou silou.\"\n";
+                hrac.zlato += 50;
+                hrac.zkusenosti += 20;
+                zkontrolujLevelUp(hrac);
+                cout << "Ziskal jsi 50 zlata a zkusenosti!\n";
+            } else {
+                cout << "Spatne! Starec zmizi v mlze a nezanecha po sobe nic...\n";
+            }
+        } else if (sance < 70) {
             cout << "Nasel jsi 20 zlata!\n";
             hrac.zlato += 20;
         } else {
