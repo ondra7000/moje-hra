@@ -150,6 +150,103 @@ void tahovyBoj(Class &hrac, Monster &nepritel) {
         cout << "Souper - Zivoty: " << nepritel.currentZivoty << "/" << nepritel.maxZivoty << endl;
     }
 }
+void tahovyBojDvaVsJedna(Class &hrac, Monster &nepritel1, Monster &nepritel2) {
+    cout << "\nSouboj zacina! Souperi jsou " << nepritel1.name << " a " << nepritel2.name << ".\n";
+
+    bool obranaPouzita = false;
+    int nepritel1OriginalUtok = nepritel1.utok;
+    int nepritel2OriginalUtok = nepritel2.utok;
+
+    while (hrac.currentZivoty > 0 && (nepritel1.currentZivoty > 0 || nepritel2.currentZivoty > 0)) {
+        int volba;
+        cout << "\nZvol svou akci:\n";
+        cout << "1. Utok na " << nepritel1.name << " (Zivoty: " << nepritel1.currentZivoty << "/" << nepritel1.maxZivoty << ")\n";
+        cout << "2. Utok na " << nepritel2.name << " (Zivoty: " << nepritel2.currentZivoty << "/" << nepritel2.maxZivoty << ")\n";
+        cout << "3. Obrana (lze pouzit jen jednou za souboj)\n";
+        cout << "4. Pouziti lektvaru (+5 zivotu, ale moznost otravy -2 zivoty)\n";
+        cout << "Zadej volbu: ";
+        cin >> volba;
+
+        switch (volba) {
+            case 1:
+                if (nepritel1.currentZivoty > 0) {
+                    cout << hrac.name << " utoci na " << nepritel1.name << " a udeluje " << hrac.utok << " poskozeni.\n";
+                    nepritel1.currentZivoty -= hrac.utok;
+                } else {
+                    cout << nepritel1.name << " je jiz porazen, ztracis tah.\n";
+                }
+                break;
+            case 2:
+                if (nepritel2.currentZivoty > 0) {
+                    cout << hrac.name << " utoci na " << nepritel2.name << " a udeluje " << hrac.utok << " poskozeni.\n";
+                    nepritel2.currentZivoty -= hrac.utok;
+                } else {
+                    cout << nepritel2.name << " je jiz porazen, ztracis tah.\n";
+                }
+                break;
+            case 3:
+                if (!obranaPouzita) {
+                    obranaPouzita = true;
+                    cout << hrac.name << " se brani a snizuje poskozeni z utoku souperu na polovinu v tomto kole.\n";
+                    nepritel1.utok = nepritel1OriginalUtok / 2;
+                    nepritel2.utok = nepritel2OriginalUtok / 2;
+                } else {
+                    cout << "Obrana jiz byla pouzita! Ztracis tah.\n";
+                }
+                break;
+            case 4: {
+                int sanceNaOtravu = rand() % 2;
+                if (hrac.currentZivoty < hrac.maxZivoty) {
+                    if (sanceNaOtravu == 0) {
+                        hrac.currentZivoty += 5;
+                        if (hrac.currentZivoty > hrac.maxZivoty)
+                            hrac.currentZivoty = hrac.maxZivoty;
+                        cout << "Pouzil jsi lektvar! Aktualni zivoty: " << hrac.currentZivoty << endl;
+                    } else {
+                        hrac.currentZivoty -= 2;
+                        cout << "Lektvar te otravil! Ztratil jsi 2 zivoty. Aktualni zivoty: " << hrac.currentZivoty << endl;
+                    }
+                } else {
+                    cout << "Mas plne zivoty a nelze pouzit lektvar.\n";
+                }
+                break;
+            }
+            default:
+                cout << "Neplatna volba! Ztracis tah.\n";
+        }
+
+        if (nepritel1.currentZivoty <= 0 && nepritel2.currentZivoty <= 0) {
+            cout << "Oba souperi byli porazeni!\n";
+            hrac.zkusenosti += 20;
+            cout << "Ziskal jsi 20 zkusenosti! Aktualni zkusenosti: " << hrac.zkusenosti << endl;
+            return;
+        }
+
+        int damage = 0;
+        if (nepritel1.currentZivoty > 0) {
+            damage += nepritel1.utok;
+            cout << nepritel1.name << " utoci a udeluje " << nepritel1.utok << " poskozeni!\n";
+        }
+        if (nepritel2.currentZivoty > 0) {
+            damage += nepritel2.utok;
+            cout << nepritel2.name << " utoci a udeluje " << nepritel2.utok << " poskozeni!\n";
+        }
+
+        hrac.currentZivoty -= damage;
+
+        if (hrac.currentZivoty <= 0) {
+            cout << "Hrac byl porazen! Hra konci.\n";
+            exit(0);
+        }
+
+        nepritel1.utok = nepritel1OriginalUtok;
+        nepritel2.utok = nepritel2OriginalUtok;
+
+        cout << "\nHrac - Zivoty: " << hrac.currentZivoty << "/" << hrac.maxZivoty << endl;
+        cout << nepritel1.name << " - Zivoty: " << nepritel1.currentZivoty << "/" << nepritel1.maxZivoty << endl;
+        cout << nepritel2.name << " - Zivoty: " << nepritel2.currentZivoty << "/" << nepritel2.maxZivoty << endl;
+    }
+}
 
 void navstivVesnici(Class &hrac) {
     int volba;
@@ -175,6 +272,7 @@ void navstivVesnici(Class &hrac) {
         switch (volba) {
             case 1:
                 if (hrac.zlato >= 50) {
+                    hrac.maxZivoty += 1;
                     hrac.currentZivoty += 1;
                     hrac.zlato -= 50;
                     cout << "Zakoupil jsi helmu! Aktualni zivoty: " << hrac.currentZivoty << ".\n";
@@ -258,6 +356,9 @@ int main() {
     tahovyBoj(hrac, miniBoss);
     navstivVesnici(hrac);
     zahadnaJeskyne(hrac);
+    Monster monsterA = {"Monstrum A", 6, 6, 2, false};
+    Monster monsterB = {"Monstrum B", 8, 8, 2, false};
+    tahovyBojDvaVsJedna(hrac, monsterA, monsterB);
 
     cout << "\nDobrodruzstvi skoncilo! Zvladnes dalsi cestu?\n";
     cout << "Zivoty: " << hrac.currentZivoty << "/" << hrac.maxZivoty << ", Zlato: " << hrac.zlato << ", Level: " << hrac.level << endl;
