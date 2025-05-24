@@ -332,7 +332,7 @@ void zahadnaJeskyne(Class &hrac) {
             }
         } else if (sance < 70) {
             cout << "Nasel jsi 20 zlata!\n";
-            hrac.zlato += 20;
+            hrac.zlato += 40;
         } else {
             cout << "Potkal jsi jeskynni carodejnici! Otravi te a sebere vsechno zlato!\n";
             hrac.zlato = 0;
@@ -341,6 +341,55 @@ void zahadnaJeskyne(Class &hrac) {
         }
     } else {
         cout << "Rozhodl ses jeskyni vynechat.\n";
+    }
+}
+void navstivBojovnickouVesnici(Class &hrac) {
+    int volba;
+
+    cout << "\nDorazil jsi do vesnice bojovniku! Aktualni zlato: " << hrac.zlato << ".\n";
+    cout << "Chces ji navstivit?\n";
+    cout << "1. Ano\n";
+    cout << "2. Ne\n";
+    cin >> volba;
+
+    if (volba == 2) {
+        cout << "Pokracujes ve sve ceste bez navstevy vesnice.\n";
+        return;
+    }
+
+    while (true) {
+        cout << "\nVesnice bojovniku - Moznosti:\n";
+        cout << "1. Zakoupit mec (+2 utok za 80 zlata)\n";
+        cout << "2. Doplnit zivoty na maximum (za 40 zlata)\n";
+        cout << "3. Opustit vesnici\n";
+        cin >> volba;
+
+        switch (volba) {
+            case 1:
+                if (hrac.zlato >= 80) {
+                    hrac.utok += 2;
+                    hrac.zlato -= 80;
+                    cout << "Zakoupil jsi mec! Aktualni utok: " << hrac.utok << ".\n";
+                    cout << "Zbyvajici zlato: " << hrac.zlato << ".\n";
+                } else {
+                    cout << "Nemas dostatek zlata.\n";
+                }
+                break;
+            case 2:
+                if (hrac.zlato >= 40) {
+                    hrac.currentZivoty = hrac.maxZivoty;
+                    hrac.zlato -= 40;
+                    cout << "Zivoty doplneny. Aktualni zivoty: " << hrac.currentZivoty << ".\n";
+                } else {
+                    cout << "Nemas dostatek zlata.\n";
+                }
+                break;
+            case 3:
+                cout << "Opoustis vesnici.\n";
+                return;
+            default:
+                cout << "Neplatna volba!\n";
+        }
     }
 }
 
@@ -359,6 +408,7 @@ int main() {
     Monster monsterA = {"Monstrum A", 6, 6, 2, false};
     Monster monsterB = {"Monstrum B", 8, 8, 2, false};
     tahovyBojDvaVsJedna(hrac, monsterA, monsterB);
+    navstivBojovnickouVesnici(hrac);
 
     cout << "\nDobrodruzstvi skoncilo! Zvladnes dalsi cestu?\n";
     cout << "Zivoty: " << hrac.currentZivoty << "/" << hrac.maxZivoty << ", Zlato: " << hrac.zlato << ", Level: " << hrac.level << endl;
